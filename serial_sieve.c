@@ -1,46 +1,90 @@
 /**
  * Implementation of the sieve of Eratosthenes for finding all the primes up to a given number.
- * Edited to allow for command line arguments.
+ * Edited to allow for command line arguments and timing.
  * 
  * Source: https://gist.github.com/mcmullm2-dcu/117649ca592b8d6a065aa28db41b11dd 
+ * Usage: ./Bin/serial_sieve <max> <1 to print result>
  * 
  * @author Michael McMullin
  * @date 2/6/18
+ * @editor Alex Smith (alsmi14@ilsdtu.edu)
+ * @editdate 10/24/21
  */
 
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/time.h>
 
-#define MAX 1000000
+void usage(const char *);
+double getTime();
 
 int main(int argc, char const *argv[]) {
+    // Validate command line parameters.
+    if (argc != 3) 
+        usage(argv[0]);
+    
+    // Read command line parameters.
+    long max = atol(argv[1]);
+    char *primes = malloc(max * sizeof(char));
+
     // Create an array of values, where '1' indicates that a number is prime.
     // Start by assuming all numbers are prime by setting them to 1.
-    char primes[MAX];
-    for (int i = 0; i < MAX; i++){
+    double start = getTime();
+    for (long i = 0; i < max; i++){
         primes[i] = 1;
     }
 
-    // Loop through a portion of the array (up to the square root of MAX).
+    // Loop through a portion of the array (up to the square root of max).
     // If it's a prime, ensure all multiples of it are set to zero (false), as they clearly cannot be prime.
-    int limit = sqrt(MAX) + 1;
-    for (int i = 2; i < limit; i++) {
+    long limit = sqrt((long double) max) + 1;
+    for (long i = 2; i < limit; i++) {
         if (primes[i - 1]) {
-            for (int j = i * i; j <= MAX; j += i) {
+            for (long j = i * i; j <= max; j += i) {
                 primes[j - 1] = 0;
             }
         }
     }
 
     // Output the results.
-    int count = 0;
-    for (int i = 2; i <= MAX; i++) {
-        if (primes[i - 1]) {
-            printf("%d\n", i);
-            count++;
+    long count = 0;
+    if (strcmp(argv[2], "1") == 0) {
+        for (long i = 2; i <= max; i++) {
+            if (primes[i - 1]) {
+                printf("%ld\n", i);
+                count++;
+            }
         }
     }
-    printf("There were %d primes up to %d", count, MAX);
+    else {
+        for (long i = 2; i <= max; i++) {
+            if (primes[i - 1]) {
+                count++;
+            }
+        }
+    }
+    double elapsed = getTime() - start;
+    printf("Serial: %ld primes up to %ld and took %f seconds\n", count, max, elapsed);
 
-    return 0;
+    exit(EXIT_SUCCESS);
+}
+
+/**
+ * Prints a message to stderr explaining how to run the program.
+ * 
+ * @param prog_name the name of the executable file
+ */
+void usage(const char *prog_name) {
+    fprintf(stderr, "\nUsage: %s <max> <1 to print result>\n\n", prog_name);
+    exit(EXIT_FAILURE);
+}
+
+/**
+ * Gets the current time in seconds.
+ */
+double getTime(){
+    struct timeval t;
+    gettimeofday(&t, NULL);
+    return t.tv_sec + t.tv_usec/1000000.0;
 }

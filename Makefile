@@ -1,6 +1,7 @@
 CC=gcc
 MPICC=mpicc
-LIBS=-fopenmp
+LIBS1=-fopenmp -lm
+LIBS2=-lm
 BIN=Bin/
 OUT=Out/
 FLAGS=-g -Wall
@@ -8,13 +9,13 @@ FLAGS=-g -Wall
 all:omp mpi serial
 
 omp:omp_sieve.c
-	$(CC) $(FLAGS) -o $(BIN)omp_sieve omp_sieve.c $(LIBS)
+	$(CC) $(FLAGS) -o $(BIN)omp_sieve omp_sieve.c $(LIBS1)
 
 mpi:mpi_sieve.c
 	$(MPICC) $(FLAGS) -o $(BIN)mpi_sieve mpi_sieve.c
 
 serial:serial_sieve.c
-	$(CC) $(FLAGS) -o $(BIN)serial_sieve serial_sieve.c
+	$(CC) $(FLAGS) -o $(BIN)serial_sieve serial_sieve.c $(LIBS2)
 
 cleanAll:cleanOMP cleanMPI cleanSerial
 
