@@ -7,7 +7,7 @@
  * 
  * @author Michael McMullin
  * @date 2/6/18
- * @editor Alex Smith (alsmi14@ilsdtu.edu)
+ * @editor Alex Smith (alsmi14@ilstu.edu)
  * @editdate 10/24/21
  */
 
