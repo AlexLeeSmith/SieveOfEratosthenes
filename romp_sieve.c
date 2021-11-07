@@ -31,7 +31,7 @@ void printPrimes(const char [], unsigned long);
 
 int main(int argc, char const *argv[]) {
     double start, elapsed;
-    unsigned long primeCount = 0, size;
+    unsigned long size;
     char *primes;
     myArgs args;
 
@@ -52,7 +52,7 @@ int main(int argc, char const *argv[]) {
         elapsed = omp_get_wtime() - start;
         
         // Output the results.
-        printf("R-OMP: %lu primes up to %lu and took %f seconds\n", primeCount, args.max, elapsed);
+        printf("R-OMP: %d threads, Max = %lu, %f seconds\n", args.numThreads, args.max, elapsed);
         if (args.shouldPrint)
             printPrimes(primes, size);
     }
@@ -72,7 +72,7 @@ int main(int argc, char const *argv[]) {
  */
 myArgs getArgs(int argc, char const *argv[]) {
     myArgs args;
-    
+
     if (argc != 3 && argc != 4) 
         usage(argv[0]);
     
@@ -80,13 +80,15 @@ myArgs getArgs(int argc, char const *argv[]) {
     if (args.numThreads <= 0 || args.numThreads > MAX_THREADS) 
         usage(argv[0]);
     
+    if (*argv[2] == '-')
+        usage(argv[0]);
     args.max = strtoul(argv[2], NULL, 10);
-
+    
     if (argc == 4 && strcmp(argv[3], "1") == 0) 
         args.shouldPrint = 1;
     else
         args.shouldPrint = 0;
-
+    
     return args;
 } 
 
@@ -98,6 +100,7 @@ myArgs getArgs(int argc, char const *argv[]) {
 void usage(const char *prog_name) {
     fprintf(stderr, "\nUsage: %s <thread count> <max> <1 to print primes>\n", prog_name);
     fprintf(stderr, "\tThread count must be greater than 0 and less than %d\n", MAX_THREADS + 1);
+    fprintf(stderr, "\tMax must be greater than or equal to 0\n\n");
     exit(EXIT_FAILURE);
 }
 
@@ -116,7 +119,7 @@ void ompInitArray(char arr[], int numThreads, unsigned long size) {
 }
 
 /**
- * Finds all primes up to a specifed number using multithreading.
+ * Finds all primes up to and including a specifed number using multithreading.
  * 
  * @param primes the array to mark the prime numbers in
  * @param numThreads the number of threads to use
