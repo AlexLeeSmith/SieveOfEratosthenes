@@ -6,11 +6,10 @@
  */
 
 /** Preprocessor Directives **/
-#include <stdio.h>      // printf(), fprintf(), stderr, perror()
+#include <stdio.h>      // printf(), puts(), fprintf(), stderr
 #include <math.h>       // sqrt()
 #include <stdlib.h>     // exit(), EXIT_SUCCESS, EXIT_FAILURE, malloc(), free()
 #include <string.h>     // strcmp()
-#include <sys/time.h>   // timeval, gettimeofday()
 #include <omp.h>        // omp_get_wtime()
 
 #define MAX_THREADS 1024
