@@ -6,7 +6,7 @@ BIN=Bin/
 OUT=Out/
 FLAGS=-g -Wall
 
-all:romp mpi serial
+all:romp mpi serialSimple
 
 romp:romp_sieve.c
 	$(CC) $(FLAGS) -o $(BIN)romp_sieve romp_sieve.c $(LIBS1)
@@ -14,10 +14,10 @@ romp:romp_sieve.c
 mpi:mpi_sieve.c
 	$(MPICC) $(FLAGS) -o $(BIN)mpi_sieve mpi_sieve.c $(LIBS2)
 
-serial:serial_sieve.c
-	$(CC) $(FLAGS) -o $(BIN)serial_sieve serial_sieve.c $(LIBS2)
+serialSimple:serial_sieve_simple.c
+	$(CC) $(FLAGS) -o $(BIN)serial_sieve_simple serial_sieve_simple.c $(LIBS2)
 
-cleanAll:cleanOMP cleanMPI cleanSerial
+cleanAll:cleanROMP cleanMPI cleanSerialSimple
 
 cleanROMP:
 	rm $(BIN)romp_sieve $(OUT)romp_output
@@ -25,5 +25,5 @@ cleanROMP:
 cleanMPI:
 	rm $(BIN)mpi_sieve $(OUT)mpi_output
 
-cleanSerial:
-	rm $(BIN)serial_sieve $(OUT)serial_output
+cleanSerialSimple:
+	rm $(BIN)serial_sieve_simple $(OUT)serial_simple_output
