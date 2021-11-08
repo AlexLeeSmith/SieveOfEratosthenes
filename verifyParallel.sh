@@ -1,10 +1,12 @@
-# Usage: ./verifyParallel.sh <execName>
+# Usage: ./verifyParallel.sh <execPath>
 
 outFolder='Out'
-binFolder='Bin'
-outFile=$outFolder/'verify_parallel'
+outFileEven=$outFolder/'verify_parallel_even'
+outFileOdd=$outFolder/'verify_parallel_odd'
 
-rm $outFile
+rm $outFileEven $outFileOdd
 
-./$binFolder/$1 2 3000000 1 > $outFile
-diff -w $outFile $outFolder/primesThrough3Mil
+./$1 2 3000000 1 > $outFileEven
+./$1 2 2999999 1 > $outFileOdd
+diff -w $outFileEven $outFolder/primesThrough3Mil
+diff -w $outFileOdd $outFolder/primesThrough3Mil

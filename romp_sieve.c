@@ -7,7 +7,7 @@
 
 /** Preprocessor Directives **/
 #include <stdio.h>      // printf(), puts(), fprintf(), stderr
-#include <math.h>       // sqrt()
+#include <math.h>       // sqrt(), ceil()
 #include <stdlib.h>     // exit(), EXIT_SUCCESS, EXIT_FAILURE, malloc(), free()
 #include <string.h>     // strcmp()
 #include <omp.h>        // omp_get_wtime()
@@ -39,7 +39,7 @@ int main(int argc, char const *argv[]) {
 
     if (args.max > 1) {
         // Allocate memory.
-        size = args.max / 2;
+        size = ceil((double) args.max / 2);
         primes = malloc(size * sizeof(char));
 
         // Initialize primes array.
