@@ -3,7 +3,7 @@
  * Edited to allow for command line arguments and timing.
  * 
  * Source: https://gist.github.com/mcmullm2-dcu/117649ca592b8d6a065aa28db41b11dd 
- * Usage: ./Bin/serial_sieve <max> <1 to print result>
+ * Usage: ./Bin/serial_sieve_simple <max> <Opt: 1 to print result>
  * 
  * @author Michael McMullin
  * @date 2/6/18
@@ -22,12 +22,17 @@ double getTime();
 
 int main(int argc, char const *argv[]) {
     // Validate command line parameters.
-    if (argc != 3) 
+    if (argc != 2 && argc != 3) 
         usage(argv[0]);
     
     // Read command line parameters.
     long max = atol(argv[1]);
     char *primes = malloc(max * sizeof(char));
+    char shouldPrint;
+    if (argc == 3 && strcmp(argv[2], "1") == 0) 
+        shouldPrint = 1;
+    else
+        shouldPrint = 0;
 
     // Create an array of values, where '1' indicates that a number is prime.
     // Start by assuming all numbers are prime by setting them to 1.
@@ -46,26 +51,17 @@ int main(int argc, char const *argv[]) {
             }
         }
     }
+    double elapsed = getTime() - start;
 
     // Output the results.
-    long count = 0;
-    if (strcmp(argv[2], "1") == 0) {
+    printf("Serial-Simple: Max = %ld, %f seconds\n", max, elapsed);
+    if (shouldPrint) {
         for (long i = 2; i <= max; i++) {
             if (primes[i - 1]) {
                 printf("%ld\n", i);
-                count++;
             }
         }
     }
-    else {
-        for (long i = 2; i <= max; i++) {
-            if (primes[i - 1]) {
-                count++;
-            }
-        }
-    }
-    double elapsed = getTime() - start;
-    printf("Serial: %ld primes up to %ld and took %f seconds\n", count, max, elapsed);
 
     exit(EXIT_SUCCESS);
 }
