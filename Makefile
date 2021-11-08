@@ -1,5 +1,6 @@
 CC=gcc
 MPICC=mpicc
+RM=rm -f
 LIBS1=-fopenmp -lm
 LIBS2=-lm
 BIN=Bin/
@@ -17,13 +18,16 @@ mpi:mpi_sieve.c
 serialSimple:serial_sieve_simple.c
 	$(CC) $(FLAGS) -o $(BIN)serial_sieve_simple serial_sieve_simple.c $(LIBS2)
 
-cleanAll:cleanROMP cleanMPI cleanSerialSimple
+clean:cleanROMP cleanMPI cleanSerialSimple cleanVerify
 
 cleanROMP:
-	rm $(BIN)romp_sieve $(OUT)romp_output
+	$(RM) $(BIN)romp_sieve $(OUT)romp_output
 
 cleanMPI:
-	rm $(BIN)mpi_sieve $(OUT)mpi_output
+	$(RM) $(BIN)mpi_sieve $(OUT)mpi_output
 
 cleanSerialSimple:
-	rm $(BIN)serial_sieve_simple $(OUT)serial_simple_output
+	$(RM) $(BIN)serial_sieve_simple $(OUT)serial_simple_output
+
+cleanVerify:
+	$(RM) $(OUT)verify_parallel_even $(OUT)verify_parallel_odd
