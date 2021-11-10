@@ -7,7 +7,7 @@ BIN=Bin/
 OUT=Out/
 FLAGS=-g -Wall
 
-all:romp mpi serialSimple
+all:romp mpi serialSimple serialEnhanced
 
 romp:romp_sieve.c
 	$(CC) $(FLAGS) -o $(BIN)romp_sieve romp_sieve.c $(LIBS1)
@@ -15,10 +15,15 @@ romp:romp_sieve.c
 mpi:mpi_sieve.c
 	$(MPICC) $(FLAGS) -o $(BIN)mpi_sieve mpi_sieve.c $(LIBS2)
 
+compareSerial:serialSimple serialEnhanced
+
 serialSimple:serial_sieve_simple.c
 	$(CC) $(FLAGS) -o $(BIN)serial_sieve_simple serial_sieve_simple.c $(LIBS2)
 
-clean:cleanROMP cleanMPI cleanSerialSimple cleanVerify
+serialEnhanced:serial_sieve_enhanced.c
+	$(CC) $(FLAGS) -o $(BIN)serial_sieve_enhanced serial_sieve_enhanced.c $(LIBS2)
+
+clean:cleanROMP cleanMPI cleanSerialSimple cleanSerialEnhanced cleanVerify
 
 cleanROMP:
 	$(RM) $(BIN)romp_sieve $(OUT)romp_output
@@ -29,5 +34,11 @@ cleanMPI:
 cleanSerialSimple:
 	$(RM) $(BIN)serial_sieve_simple $(OUT)serial_simple_output
 
+cleanSerialEnhanced:
+	$(RM) $(BIN)serial_sieve_enhanced $(OUT)serial_enhanced_output
+
+cleanCompareSerial:
+	$(RM) $(BIN)serial_sieve_simple $(BIN)serial_sieve_enhanced $(OUT)compare_serial_output
+
 cleanVerify:
-	$(RM) $(OUT)verify_parallel_even $(OUT)verify_parallel_odd
+	$(RM) $(OUT)verify_even $(OUT)verify_odd
