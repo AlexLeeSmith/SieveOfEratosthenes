@@ -1,7 +1,7 @@
 /**
- * Enhanced implementation of the sieve of Eratosthenes for finding all the primes up to a given number.
+ * Enhanced serial implementation of the sieve of Eratosthenes for finding all the primes up to a given number.
  * 
- * Usage: ./Bin/serial_sieve_simple <max> <Opt: 1 to print result>
+ * Usage: ./Bin/serial_sieve_enhanced <max> <Opt: 1 to print result>
  * 
  * @author Alex Smith (alsmi14@ilstu.edu)
  * @date 12/10/21
@@ -116,8 +116,8 @@ void initArray(char arr[], unsigned long size) {
  * @param max the largest number to search up to
  */
 void sieve(char primes[], unsigned long max) {
-    // Start at 3 because primes are non-even except 2.
-    if (max > 2) {
+    // Start after 7 because the first 4 entries in the array are always prime.
+    if (max > 7) {
         unsigned long i, j, limit = sqrt((long double) max) + 1;
 
         // Loop through only the first portion of the array (up to the square root of max).
@@ -126,8 +126,8 @@ void sieve(char primes[], unsigned long max) {
             if (primes[i / 2]) {
                 // Mark all multiples of the value to zero (false), as they cannot be prime.
                 for (j = i * i; j <= max; j += i) {
-                    // Only update the value if it is non-even.
-                    if (j % 2 != 0)
+                    // Only update the value if it is non-even and not already marked as composite.
+                    if (j % 2 != 0 && primes[j / 2] != 0)
                         primes[j / 2] = 0;
                 }
             }

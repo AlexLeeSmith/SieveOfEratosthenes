@@ -15,15 +15,13 @@ romp:romp_sieve.c
 mpi:mpi_sieve.c
 	$(MPICC) $(FLAGS) -o $(BIN)mpi_sieve mpi_sieve.c $(LIBS2)
 
-compareSerial:serialSimple serialEnhanced
-
 serialSimple:serial_sieve_simple.c
 	$(CC) $(FLAGS) -o $(BIN)serial_sieve_simple serial_sieve_simple.c $(LIBS2)
 
 serialEnhanced:serial_sieve_enhanced.c
 	$(CC) $(FLAGS) -o $(BIN)serial_sieve_enhanced serial_sieve_enhanced.c $(LIBS2)
 
-clean:cleanROMP cleanMPI cleanSerialSimple cleanSerialEnhanced cleanVerify
+clean:cleanROMP cleanMPI cleanSerialSimple cleanSerialEnhanced cleanCompareSerial cleanVerify
 
 cleanROMP:
 	$(RM) $(BIN)romp_sieve $(OUT)romp_output
@@ -38,7 +36,7 @@ cleanSerialEnhanced:
 	$(RM) $(BIN)serial_sieve_enhanced $(OUT)serial_enhanced_output
 
 cleanCompareSerial:
-	$(RM) $(BIN)serial_sieve_simple $(BIN)serial_sieve_enhanced $(OUT)compare_serial_output
+	$(RM) $(BIN)serial_sieve_simple $(BIN)serial_sieve_enhanced $(BIN)romp_sieve $(OUT)compare_serial_output
 
 cleanVerify:
 	$(RM) $(OUT)verify_even $(OUT)verify_odd
