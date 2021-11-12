@@ -1,2 +1,4 @@
 serial_sieve_enhanced2.c
 testSerialEnhanced.sh
+testROMP.sh
+romp_sieve_test.c

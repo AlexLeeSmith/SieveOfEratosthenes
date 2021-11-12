@@ -1,9 +1,9 @@
-make cleanROMP
-make romp
-
 outFolder='Out'
 binFolder='Bin'
-outFile=$outFolder/'romp_output'
+outFile=$outFolder/'compare_parallel_output'
+
+make cleanCompareParallel
+make romp
 
 for N in 10000000 100000000 1000000000
 do

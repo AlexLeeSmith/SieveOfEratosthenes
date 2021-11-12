@@ -24,19 +24,22 @@ serialEnhanced:serial_sieve_enhanced.c
 clean:cleanROMP cleanMPI cleanSerialSimple cleanSerialEnhanced cleanCompareSerial cleanVerify
 
 cleanROMP:
-	$(RM) $(BIN)romp_sieve $(OUT)romp_output
+	$(RM) $(BIN)romp_sieve
 
 cleanMPI:
-	$(RM) $(BIN)mpi_sieve $(OUT)mpi_output
+	$(RM) $(BIN)mpi_sieve
 
 cleanSerialSimple:
-	$(RM) $(BIN)serial_sieve_simple $(OUT)serial_simple_output
+	$(RM) $(BIN)serial_sieve_simple
 
 cleanSerialEnhanced:
-	$(RM) $(BIN)serial_sieve_enhanced $(OUT)serial_enhanced_output
+	$(RM) $(BIN)serial_sieve_enhanced
 
-cleanCompareSerial:
-	$(RM) $(BIN)serial_sieve_simple $(BIN)serial_sieve_enhanced $(BIN)romp_sieve $(OUT)compare_serial_output
+cleanCompareSerial:cleanSerialSimple cleanSerialEnhanced cleanROMP
+	$(RM) $(OUT)compare_serial_output
+
+cleanCompareParallel:cleanROMP
+	$(RM) $(OUT)compare_parallel_output
 
 cleanVerify:
 	$(RM) $(OUT)verify_even $(OUT)verify_odd
