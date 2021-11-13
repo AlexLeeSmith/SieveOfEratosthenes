@@ -6,7 +6,5 @@ Validate output using:
 2. diff -w outFile1 outFile2
 
 Todo:
-1. maybe make a more efficient serial method
-2. Alex: going to work on a recursive omp implementation
-3. maybe an MPI or hybrid implementation
-4. maybe a CUDA implementation
+1. maybe an MPI or hybrid implementation
+2. maybe a CUDA implementation
