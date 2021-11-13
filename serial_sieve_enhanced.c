@@ -1,5 +1,5 @@
 /**
- * Enhanced serial implementation of the sieve of Eratosthenes for finding all the primes up to a given number.
+ * Enhanced serial implementation of the Sieve of Eratosthenes for finding all the primes up to a given number.
  * 
  * Usage: ./Bin/serial_sieve_enhanced <max> <Opt: 1 to print result>
  * 
@@ -51,7 +51,7 @@ int main(int argc, char const *argv[]) {
         elapsed = getTime() - start;
         
         // Output the results.
-        printf("Serial-Enhanced: Max = %lu, %f seconds\n", args.max, elapsed);
+        printf("Serial-Enhanced: Max = %.1le, %f seconds\n", (double) args.max, elapsed);
         if (args.shouldPrint)
             printPrimes(primes, size);
     }
@@ -93,7 +93,7 @@ myArgs getArgs(int argc, char const *argv[]) {
  * @param prog_name the name of the executable file
  */
 void usage(const char *prog_name) {
-    fprintf(stderr, "\nUsage: %s <max> <1 to print result>\n\n", prog_name);
+    fprintf(stderr, "\nUsage: %s <max> <Opt: 1 to print result>\n\n", prog_name);
     exit(EXIT_FAILURE);
 }
 
@@ -124,9 +124,9 @@ void sieve(char primes[], unsigned long max) {
         for (i = 3; i < limit; i += 2) {
             // If the value is one (true), then it is prime.
             if (primes[i / 2]) {
-                // Mark all multiples of the value to zero (false), as they cannot be prime.
+                // Mark all multiples of the value between limit and max to zero (false), as they cannot be prime.
                 for (j = i * i; j <= max; j += i) {
-                    // Only update the value if it is non-even and not already marked as composite.
+                    // Only update the multiple if it is odd and not already marked as composite.
                     if (j % 2 != 0 && primes[j / 2] != 0)
                         primes[j / 2] = 0;
                 }

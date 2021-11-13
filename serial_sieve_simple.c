@@ -1,5 +1,5 @@
 /**
- * Implementation of the sieve of Eratosthenes for finding all the primes up to a given number.
+ * Simple serial implementation of the Sieve of Eratosthenes for finding all the primes up to a given number.
  * Edited to allow for command line arguments and timing.
  * 
  * Source: https://gist.github.com/mcmullm2-dcu/117649ca592b8d6a065aa28db41b11dd 
@@ -26,7 +26,7 @@ int main(int argc, char const *argv[]) {
         usage(argv[0]);
     
     // Read command line parameters.
-    long max = atol(argv[1]);
+    unsigned long max = atol(argv[1]);
     char *primes = malloc(max * sizeof(char));
     char shouldPrint;
     if (argc == 3 && strcmp(argv[2], "1") == 0) 
@@ -37,16 +37,16 @@ int main(int argc, char const *argv[]) {
     // Create an array of values, where '1' indicates that a number is prime.
     // Start by assuming all numbers are prime by setting them to 1.
     double start = getTime();
-    for (long i = 0; i < max; i++){
+    for (unsigned long i = 0; i < max; i++){
         primes[i] = 1;
     }
 
     // Loop through a portion of the array (up to the square root of max).
     // If it's a prime, ensure all multiples of it are set to zero (false), as they clearly cannot be prime.
-    long limit = sqrt((long double) max) + 1;
-    for (long i = 2; i < limit; i++) {
+    unsigned long limit = sqrt((long double) max) + 1;
+    for (unsigned long i = 2; i < limit; i++) {
         if (primes[i - 1]) {
-            for (long j = i * i; j <= max; j += i) {
+            for (unsigned long j = i * i; j <= max; j += i) {
                 primes[j - 1] = 0;
             }
         }
@@ -54,11 +54,11 @@ int main(int argc, char const *argv[]) {
     double elapsed = getTime() - start;
 
     // Output the results.
-    printf("Serial-Simple: Max = %ld, %f seconds\n", max, elapsed);
+    printf("Serial-Simple: Max = %.1le, %f seconds\n", (double) max, elapsed);
     if (shouldPrint) {
-        for (long i = 2; i <= max; i++) {
+        for (unsigned long i = 2; i <= max; i++) {
             if (primes[i - 1]) {
-                printf("%ld\n", i);
+                printf("%lu\n", i);
             }
         }
     }
@@ -72,7 +72,7 @@ int main(int argc, char const *argv[]) {
  * @param prog_name the name of the executable file
  */
 void usage(const char *prog_name) {
-    fprintf(stderr, "\nUsage: %s <max> <1 to print result>\n\n", prog_name);
+    fprintf(stderr, "\nUsage: %s <max> <Opt: 1 to print result>\n\n", prog_name);
     exit(EXIT_FAILURE);
 }
 
