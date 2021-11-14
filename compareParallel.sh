@@ -3,13 +3,17 @@ binFolder='Bin'
 outFile=$outFolder/'compare_parallel_output'
 
 make cleanCompareParallel
+make omp
 make romp
 
-for N in 10000000 100000000 1000000000
+# N = 1e8, 1e9
+for N in 100000000 1000000000
 do
     for nThreads in 1 2 5 10
     do
+        ./$binFolder/omp_sieve $nThreads $N >> $outFile
         ./$binFolder/romp_sieve $nThreads $N >> $outFile
+        echo ~~~~~~~~~~~~~~~ >> $outFile
     done
     echo =============== >> $outFile
 done
