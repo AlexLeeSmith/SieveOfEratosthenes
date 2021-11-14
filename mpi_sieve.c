@@ -1,189 +1,173 @@
 /**
  * This program parallelizes the Sieve of Eratosthenes using MPI to find all primes up to a specified natural number.
- * 
+ * Based off of code from marius92mc on GitHub
+ * use -lm to compile!!!!
  * @author Katelyn Hartman
  * @date 11/8/21
  */
 
+void printPrimes(const char primes[], int size);
 
-Skip to content
-Pull requests
-Issues
-Marketplace
-Explore
-@khartman428
-LittleB30 /
-SieveOfEratosthenes
-Private
+#include <mpi.h>
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-1
-0
+#define BLOCK_FIRST 3 //first odd prime number 
+#define BLOCK_STEP 2  //loop step to iterate only for odd numbers
+#define MIN(a, b) ((a) < (b)? (a): (b)) //get min
+#define BLOCK_LOW(myrank, nproc, n) \
+        ((myrank) * (n) / (nproc) / BLOCK_STEP)
+#define BLOCK_HIGH(myrank, nproc, n) \
+        (BLOCK_LOW((myrank) + 1, nproc, n) - 1)
+#define BLOCK_SIZE(myrank, nproc, n) \
+        (BLOCK_LOW((myrank) + 1, nproc, n) - BLOCK_LOW((myrank), nproc, n))
+#define BLOCK_OWNER(index, nproc, n) \
+        (((nproc) * ((index) + 1) - 1) / (n))
+#define BLOCK_VALUE_TO_INDEX(val, myrank, nproc, n) \
+        (val - BLOCK_FIRST) / BLOCK_STEP - BLOCK_LOW(myrank, nproc, n - 1)
 
-    0
+int main(int argc, char** argv)
+{
+    double  start_time, elapsed_time;           
+    int     first;                  //index of first multiple
+    int     high_value;             //highest value on this proc
+    int     myrank;                 //process myrank number
+    int     index;                  //index of current prime
+    int     lowVal;                 //lowest value on this proc
+    int     i, n, nproc, m, prime, size, sqrt_n;
+    int     firstValIn;
+    int     primeStep, primeDoub, multiple;
+    int     numPerBlock, localLowVal, localHighVal;
+    int     blockFirstIn; 
+    char*   marked;               //portion of 2 - n
+    char*   primes;               //prime array
 
-Code
-Issues
-Pull requests
-Actions
-Projects
-Security
+    MPI_Init(&argc, &argv);
 
-    Insights
+    //get start time
+    MPI_Barrier(MPI_COMM_WORLD);
+    start_time = MPI_Wtime();
 
-SieveOfEratosthenes/romp_sieve.c
-@alsmi14
-alsmi14 Removed unecessary library
-Latest commit a51223c 18 hours ago
-History
-1 contributor
-167 lines (144 sloc) 4.92 KB
-/**
- * This program parallelizes the Sieve of Eratosthenes using OpenMP to find all primes up to a specified natural number.
- * 
- * @author Alex Smith (alsmi14@ilstu.edu)
- * @date 11/6/21
- */
+    MPI_Comm_rank(MPI_COMM_WORLD, &myrank);
+    MPI_Comm_size(MPI_COMM_WORLD, &nproc);
 
-/** Preprocessor Directives **/
-#include <stdio.h>      // printf(), puts(), fprintf(), stderr
-#include <math.h>       // sqrt()
-#include <stdlib.h>     // exit(), EXIT_SUCCESS, EXIT_FAILURE, malloc(), free()
-#include <string.h>     // strcmp()
-#include <mpi.h>        // 
-
-#define MAX_THREADS 1024
-
-/** Structures **/
-typedef struct {
-    int numThreads;
-    unsigned long max;
-    char shouldPrint;
-} myArgs;
-
-/** Functions **/
-myArgs getArgs(int, char const *[]);
-void usage(const char *);
-void ompInitArray(char [], int, unsigned long);
-void ompSieve(char [], int, unsigned long);
-void printPrimes(const char [], unsigned long);
-
-int main(int argc, char const *argv[]) {
-    double start, elapsed;
-    unsigned long size;
-    int nproc, my_rank;
-    char *primes;
-    myArgs args;
-
-    // Read command line parameters.
-    args = getArgs(argc, argv);
-
-    MPI_Comm comm;
-    MPI_Status status;
-    
-    MPI_Init(&argc,&argv);
-    comm=MPI_COMM_WORLD;
-    MPI_Comm_size(comm,&nproc);
-    MPI_Comm_rank(comm,&my_rank);
-
-    if (args.max > 1) {
-        // Allocate memory.
-        size = args.max / 2;
-        primes = malloc(size * sizeof(char));
-
-        // Initialize primes array.
-        MPI_Barrier(comm);
-        start = MPI_Wtime();                    
-        mpiInitArray(primes, args.numThreads, size);
-
-        // Run the sieve.
-        mpiSieve(primes, args.numThreads, size);
-        elapsed = MPI_Wtime() - start;
-        
-        // Output the results.
-        printf("MPI: %d threads, Max = %lu, %f seconds\n", args.numThreads, args.max, elapsed);
-        if (args.shouldPrint)
-            printPrimes(primes, size);
-    }
-    else {
-        printf("There are no primes less than %lu\n", args.max);
-    }
-    MPI_Finialize()
-    exit(EXIT_SUCCESS);
-}
-
-/**
- * Get the command line arguments.
- * 
- * @param argc the number of arguments
- * @param argv the array of arguments
- * @return the command line arguments in their correct data types
- */
-myArgs getArgs(int argc, char const *argv[]) {
-    myArgs args;
-
-    if (argc != 3 && argc != 4) 
-        usage(argv[0]);
-    
-    args.numThreads = strtol(argv[1], NULL, 10);
-    if (args.numThreads <= 0 || args.numThreads > MAX_THREADS) 
-        usage(argv[0]);
-    
-    if (*argv[2] == '-')
-        usage(argv[0]);
-    args.max = strtoul(argv[2], NULL, 10);
-    
-    if (argc == 4 && strcmp(argv[3], "1") == 0) 
-        args.shouldPrint = 1;
-    else
-        args.shouldPrint = 0;
-    
-    return args;
-} 
-
-/**
- * Prints a message to stderr explaining how to run the program.
- * 
- * @param prog_name the name of the executable file
- */
-void usage(const char *prog_name) {
-    fprintf(stderr, "\nUsage: %s <thread count> <max> <1 to print primes>\n", prog_name);
-    fprintf(stderr, "\tThread count must be greater than 0 and less than %d\n", MAX_THREADS + 1);
-    fprintf(stderr, "\tMax must be greater than or equal to 0\n\n");
-    exit(EXIT_FAILURE);
-}
-
-/**
- * Initializes the input array to all 1s using multithreading.
- * 
- * @param arr the array to initialize
- * @param numThreads the number of threads to use
- * @param size the size of the array
- */
-void mpiInitArray(char arr[], int numThreads, unsigned long size) { 
-    for (unsigned long i = 0; i < size; ++i){
-        arr[i] = 1;
-    }
-}
-
-/**
- * Finds all primes up to and including a specifed number using multithreading.
- * 
- * @param primes the array to mark the prime numbers in
- * @param numThreads the number of threads to use
- * @param max the largest number to search up to
- */
-void mpiSieve(char primes[], unsigned long size) { 
-    for(int i=0; i<size; i++)
+    if (argc != 2)
     {
-        //list created?
-        //first prime (k) is 2
-        int k = 2;
-        //mark all multiples of k between k^2 and n
-        //find next unmarked after k, k is now that
-        //rank 0 broadcast that number to each process
-        //repeat until k^2 > n
+        if (myrank == 0)
+        {
+            printf("Command line: %s <m>\n", argv[0]);
+        }
+        MPI_Finalize();
+        exit(1);
+    } 
+
+    n = atoi(argv[1]);
+
+    /* 
+     * Figure out this process's share of the array, as well as the 
+     * integers represented by the first and last array elements 
+     */
+    lowVal  = BLOCK_FIRST + BLOCK_LOW(myrank, nproc, n - 1)  * BLOCK_STEP;
+    high_value = BLOCK_FIRST + BLOCK_HIGH(myrank, nproc, n - 1) * BLOCK_STEP;
+    size = BLOCK_SIZE(myrank, nproc, n - 1);
+
+ 
+    m = (n - 1) / nproc;
+
+    if ((2 + m) < (int)sqrt((double)n))
+    {
+        if (myrank == 0) 
+            printf("Too many processes\n");
+        MPI_Finalize();
+        exit(1);
+    } 
+    
+    // compute primes from 2 to sqrt(n);
+    sqrt_n = sqrt(n);
+    primes = (char*)calloc(sqrt_n + 1, 1);
+    for (multiple = 2; multiple <= sqrt_n; multiple += 2)
+    {
+        primes[multiple] = 1;
     }
 
+    for (prime = 3; prime <= sqrt_n; prime += 2)
+    {
+        if (primes[prime] == 1)
+            continue;
+        for (multiple = prime << 1;multiple <= sqrt_n; multiple += prime)
+        {
+            primes[multiple] = 1;
+        }
+    }
+
+    /* 
+     * allocate this process' share of the array 
+     */
+    marked = (char*)calloc(size * sizeof(char), 1);
+    if (marked == NULL)
+    {
+        printf("Cannot allocate memory\n");
+        MPI_Finalize();
+        exit(1);
+    }
+
+    numPerBlock = 1024 * 1024;
+    localLowVal = lowVal;
+    localHighVal = MIN(high_value, lowVal + numPerBlock * BLOCK_STEP);
+    
+    for (blockFirstIn = 0; blockFirstIn < size; blockFirstIn += numPerBlock)
+    {
+        for (prime = 3; prime <= sqrt_n; prime++)
+        {
+            if (primes[prime] == 1)
+                continue;
+            if (prime * prime > localLowVal)
+            {
+                first = prime * prime;
+            }
+           else
+           {
+                if (!(localLowVal % prime))
+                {
+                    first = localLowVal;
+                }
+                else
+                {
+                    first = prime - (localLowVal % prime) + localLowVal;
+                }
+           }
+        
+           /*
+            * only consider odd multiples of the prime number
+            */
+           if ((first + prime) & 1) // is odd
+           {
+              first += prime;
+           }
+
+           firstValIn = (first - BLOCK_FIRST) / BLOCK_STEP - BLOCK_LOW(myrank, nproc, n - 1);
+           primeDoub = prime << 1;
+           primeStep = primeDoub / BLOCK_STEP;
+           for (i = first; i <= high_value; i += primeDoub)
+           {
+               marked[firstValIn] = 1;
+               firstValIn += primeStep;
+           } 
+        }
+        
+        localLowVal += numPerBlock * BLOCK_STEP;
+        localHighVal = MIN(high_value, localHighVal + numPerBlock * BLOCK_STEP); 
+    } 
+
+
+    elapsed_time = MPI_Wtime() - start_time;
+
+    /* print the results */
+    printPrimes(primes, size);
+    printf("\nElapsed time for %d processors: %d\n", nproc, elapsed_time);
+    MPI_Finalize();
+    return 0;
 }
 
 /**
@@ -192,13 +176,14 @@ void mpiSieve(char primes[], unsigned long size) {
  * @param primes the array of only odds (except 2) to be printed, where 1 indicates prime and 0 indicates non-prime
  * @param size the number of elements in the array
  */
-void printPrimes(const char primes[], unsigned long size) {
+void printPrimes(const char primes[], int size)
+{
     if (size >= 1) {
         puts("2");
 
         if (size > 1) 
-            for (unsigned long i = 1; i < size; ++i)
+            for (int i = 1; i < size; ++i)
                 if (primes[i])
-                    printf("%lu\n", i * 2 + 1);        
+                    printf("%d\n", i * 2 + 1);        
     }
 }
