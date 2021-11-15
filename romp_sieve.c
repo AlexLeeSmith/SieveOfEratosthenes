@@ -128,13 +128,13 @@ void ompInitArray(char arr[], unsigned long long size) {
 void ompSieve(char primes[], unsigned long long max) {
     // Start after 7 because the first 4 entries in the array are always prime.
     if (max > 7) {
-        unsigned long long i, j, firstJ, jIncrement, limit = sqrt((long double) max) + 1;
+        unsigned long long i, j, firstJ, jIncrement, limit = sqrt((long double) max);
         ompSieve(primes, limit);
 
         // Loop through only the first portion of the array (up to the square root of max).
         #pragma omp parallel private(i, firstJ, jIncrement) if(max - limit >= omp_get_num_threads())
         {
-            for (i = 3; i < limit; i += 2) {
+            for (i = 3; i <= limit; i += 2) {
                 // If the value is one (true), then it is prime.
                 if (primes[i / 2]) {
                     // Calculate the first j and ensure it is odd.

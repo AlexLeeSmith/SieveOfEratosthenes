@@ -42,8 +42,8 @@ int main(int argc, char const *argv[]) {
     }
 
     // Loop through only the first portion of the array (up to the square root of max).
-    unsigned long limit = sqrt((long double) max) + 1;
-    for (unsigned long i = 2; i < limit; i++) {
+    unsigned long limit = sqrt((long double) max);
+    for (unsigned long i = 2; i <= limit; i++) {
         // If the value is one (true), then it is prime.
         if (primes[i - 1]) {
             // Mark all multiples of the value up to max to zero (false), as they cannot be prime.
