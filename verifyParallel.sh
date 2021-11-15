@@ -1,12 +1,17 @@
 # Usage: ./verifyParallel.sh <execPath>
 
-outFolder='Out'
-outFileEven=$outFolder/'verify_even'
-outFileOdd=$outFolder/'verify_odd'
+if [ $# -eq 1 ]
+then
+    outFolder='Out'
+    outFileEven=$outFolder/'verify_even'
+    outFileOdd=$outFolder/'verify_odd'
 
-make cleanVerify
+    make cleanVerify
 
-./$1 2 3000000 1 > $outFileEven
-./$1 2 2999999 1 > $outFileOdd
-diff -w $outFileEven $outFolder/primesThrough3Mil
-diff -w $outFileOdd $outFolder/primesThrough3Mil
+    ./$1 10 3000000 1 > $outFileEven
+    ./$1 10 2999999 1 > $outFileOdd
+    diff -w $outFileEven $outFolder/primesThrough3Mil
+    diff -w $outFileOdd $outFolder/primesThrough3Mil
+else
+    printf "\n\tUsage: ./verifyParallel.sh <execPath>\n\n"
+fi
