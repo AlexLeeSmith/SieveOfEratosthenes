@@ -1,3 +1,6 @@
+# @author Alex Smith (alsmi14@ilstu.edu)
+# @date 11/6/21
+
 CC=gcc
 MPICC=mpicc
 RM=rm -f

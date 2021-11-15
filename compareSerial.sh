@@ -1,3 +1,6 @@
+# @author Alex Smith (alsmi14@ilstu.edu)
+# @date 11/14/21
+
 outFolder='Out'
 binFolder='Bin'
 outFile=$outFolder/'compare_serial_output'

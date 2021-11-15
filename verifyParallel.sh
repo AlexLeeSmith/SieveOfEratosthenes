@@ -1,4 +1,7 @@
 # Usage: ./verifyParallel.sh <execPath>
+#
+# @author Alex Smith (alsmi14@ilstu.edu)
+# @date 11/14/21
 
 if [ $# -eq 1 ]
 then
