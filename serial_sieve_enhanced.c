@@ -124,7 +124,7 @@ void sieve(char primes[], unsigned long max) {
         for (i = 3; i < limit; i += 2) {
             // If the value is one (true), then it is prime.
             if (primes[i / 2]) {
-                // Mark all multiples of the value between limit and max to zero (false), as they cannot be prime.
+                // Mark all multiples of the value up to max to zero (false), as they cannot be prime.
                 for (j = i * i; j <= max; j += 2 * i) {
                     // The multiple is guarenteed to be odd.
                     primes[j / 2] = 0;
