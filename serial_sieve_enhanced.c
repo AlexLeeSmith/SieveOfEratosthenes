@@ -118,17 +118,16 @@ void initArray(char arr[], unsigned long size) {
 void sieve(char primes[], unsigned long max) {
     // Start after 7 because the first 4 entries in the array are always prime.
     if (max > 7) {
-        unsigned long i, j, limit = sqrt((long double) max) + 1;
+        unsigned long i, j, limit = sqrt((long double) max);
 
         // Loop through only the first portion of the array (up to the square root of max).
-        for (i = 3; i < limit; i += 2) {
+        for (i = 3; i <= limit; i += 2) {
             // If the value is one (true), then it is prime.
             if (primes[i / 2]) {
-                // Mark all multiples of the value between limit and max to zero (false), as they cannot be prime.
-                for (j = i * i; j <= max; j += i) {
-                    // Only update the multiple if it is odd and not already marked as composite.
-                    if (j % 2 != 0 && primes[j / 2] != 0)
-                        primes[j / 2] = 0;
+                // Mark all multiples of the value up to max to zero (false), as they cannot be prime.
+                for (j = i * i; j <= max; j += 2 * i) {
+                    // The multiple is guarenteed to be odd.
+                    primes[j / 2] = 0;
                 }
             }
         }

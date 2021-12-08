@@ -1,3 +1,6 @@
+# @author Alex Smith (alsmi14@ilstu.edu)
+# @date 11/6/21
+
 CC=gcc
 MPICC=mpicc
 RM=rm -f
@@ -7,7 +10,10 @@ BIN=Bin/
 OUT=Out/
 FLAGS=-g -Wall
 
-all:romp mpi serialSimple serialEnhanced
+all:omp romp serialSimple serialEnhanced
+
+omp:omp_sieve.c
+	$(CC) $(FLAGS) -o $(BIN)omp_sieve omp_sieve.c $(LIBS1)
 
 romp:romp_sieve.c
 	$(CC) $(FLAGS) -o $(BIN)romp_sieve romp_sieve.c $(LIBS1)
@@ -21,7 +27,10 @@ serialSimple:serial_sieve_simple.c
 serialEnhanced:serial_sieve_enhanced.c
 	$(CC) $(FLAGS) -o $(BIN)serial_sieve_enhanced serial_sieve_enhanced.c $(LIBS2)
 
-clean:cleanROMP cleanMPI cleanSerialSimple cleanSerialEnhanced cleanCompareSerial cleanVerify
+clean:cleanOMP cleanROMP cleanSerialSimple cleanSerialEnhanced cleanCompareSerial cleanCompareParallel cleanVerify
+
+cleanOMP:
+	$(RM) $(BIN)omp_sieve
 
 cleanROMP:
 	$(RM) $(BIN)romp_sieve
@@ -35,10 +44,10 @@ cleanSerialSimple:
 cleanSerialEnhanced:
 	$(RM) $(BIN)serial_sieve_enhanced
 
-cleanCompareSerial:cleanSerialSimple cleanSerialEnhanced cleanROMP
+cleanCompareSerial:cleanSerialSimple cleanSerialEnhanced cleanOMP cleanROMP
 	$(RM) $(OUT)compare_serial_output
 
-cleanCompareParallel:cleanROMP
+cleanCompareParallel:cleanOMP cleanROMP
 	$(RM) $(OUT)compare_parallel_output
 
 cleanVerify:
