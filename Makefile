@@ -2,7 +2,6 @@
 # @date 11/6/21
 
 CC=gcc
-MPICC=mpicc
 RM=rm -f
 LIBS1=-fopenmp -lm
 LIBS2=-lm
@@ -18,9 +17,6 @@ omp:omp_sieve.c
 romp:romp_sieve.c
 	$(CC) $(FLAGS) -o $(BIN)romp_sieve romp_sieve.c $(LIBS1)
 
-mpi:mpi_sieve.c
-	$(MPICC) $(FLAGS) -o $(BIN)mpi_sieve mpi_sieve.c $(LIBS2)
-
 serialSimple:serial_sieve_simple.c
 	$(CC) $(FLAGS) -o $(BIN)serial_sieve_simple serial_sieve_simple.c $(LIBS2)
 
@@ -34,9 +30,6 @@ cleanOMP:
 
 cleanROMP:
 	$(RM) $(BIN)romp_sieve
-
-cleanMPI:
-	$(RM) $(BIN)mpi_sieve
 
 cleanSerialSimple:
 	$(RM) $(BIN)serial_sieve_simple
