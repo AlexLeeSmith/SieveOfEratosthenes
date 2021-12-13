@@ -2,7 +2,7 @@
  * This program parallelizes the Sieve of Eratosthenes using OpenMP to find all primes up to a specified natural number.
  * 
  * Usage: %s [Thread Count] [Max] [Method] [Opt: 1 to print primes]
- * Methods: OMP, ROMP
+ * Methods: OMP, ROMP, ROMPTASKS
  * 
  * @author Alex Smith (alsmi14@ilstu.edu)
  * @date 12/13/21
@@ -30,6 +30,8 @@ void usage(const char *);
 void ompInitArray(char [], unsigned long long);
 void ompSieve(char [], unsigned long long);
 void rompSieve(char [], unsigned long long);
+void rompSieveTasks(char [], unsigned long long);
+void rompSieveTasksHelper(char [], unsigned long long);
 void printPrimes(const char [], unsigned long long);
 
 int main(int argc, char const *argv[]) {
@@ -104,6 +106,10 @@ myArgs getArgs(int argc, char const *argv[]) {
         args.methodName = "R-OMP";
         args.sieveMethod = &rompSieve;
     }
+    else if (strcmp(argv[3], "romptasks") == 0 || strcmp(argv[3], "ROMPTASKS") == 0) {
+        args.methodName = "R-OMP-Tasks";
+        args.sieveMethod = &rompSieveTasks;
+    }
     else {
         usage(argv[0]);
     }        
@@ -128,7 +134,7 @@ void usage(const char *prog_name) {
     fprintf(stderr, "\nUsage: %s [Thread Count] [Max] [Method] [Opt: 1 to print primes]\n", prog_name);
     fprintf(stderr, "\t1 <= Thread Count <= %d\n", omp_get_num_procs());
     fprintf(stderr, "\tMax >= 0\n");
-    fprintf(stderr, "\tMethods: OMP, ROMP\n\n");
+    fprintf(stderr, "\tMethods: OMP, ROMP, ROMPTASKS\n\n");
     exit(EXIT_FAILURE);
 }
 
@@ -208,6 +214,57 @@ void rompSieve(char primes[], unsigned long long max) {
                 }
             }
         }
+    }
+}
+
+/**
+ * Finds all primes up to and including a specifed number recursively with tasks using multithreading.
+ * 
+ * @param primes the array to mark the prime numbers in
+ * @param max the largest number to search up to
+ */
+void rompSieveTasks(char primes[], unsigned long long max) {
+    // Fork a team of threads.
+    #pragma omp parallel
+    {
+        // Have one thread in the team start the method.
+        #pragma omp single nowait
+        {
+            rompSieveTasksHelper(primes, max);
+        }
+    }
+}
+
+/**
+ * Helper method for the recursive implementation with tasks. 
+ * Do not call this method directly!
+ * 
+ * @param primes the array to mark the prime numbers in
+ * @param max the largest number to search up to
+ */
+void rompSieveTasksHelper(char primes[], unsigned long long max) {
+    // Start after 7 because the first 4 entries in the array are always prime.
+    if (max > 7) {
+        unsigned long long i, j, firstJ, limit = sqrt((long double) max);
+        rompSieveTasksHelper(primes, limit);
+
+        // Loop through only the first portion of the array (up to the square root of max).
+        #pragma omp taskloop
+        for (i = 3; i <= limit; i += 2) {
+            // If the value is one (true), then it is prime.
+            if (primes[i / 2]) {
+                // Calculate the first j and ensure it is odd.
+                firstJ = i * (limit / i + 1);
+                if (firstJ % 2 == 0)
+                    firstJ += i;
+                
+                // Mark all multiples of the value between limit and max to zero (false), as they cannot be prime.
+                #pragma omp taskloop nogroup
+                for (j = firstJ; j <= max; j += 2 * i) {
+                    primes[j / 2] = 0;
+                }
+            }
+        }        
     }
 }
 
