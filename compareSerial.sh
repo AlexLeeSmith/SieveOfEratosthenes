@@ -12,7 +12,7 @@ for N in 10000 1000000 100000000
 do
     ./$binFolder/serial_sieve_simple $N >> $outFile
     ./$binFolder/serial_sieve_enhanced $N >> $outFile
-    ./$binFolder/omp_sieve 1 $N >> $outFile
-    ./$binFolder/romp_sieve 1 $N >> $outFile
+    ./$binFolder/omp_sieve 1 omp $N >> $outFile
+    ./$binFolder/omp_sieve 1 romp $N >> $outFile
     echo =============== >> $outFile
 done

@@ -1,6 +1,9 @@
 /**
  * This program parallelizes the Sieve of Eratosthenes using OpenMP to find all primes up to a specified natural number.
  * 
+ * Usage: %s [Thread Count] [Max] [Method] [Opt: 1 to print primes]
+ * Methods: OMP, ROMP
+ * 
  * @author Alex Smith (alsmi14@ilstu.edu)
  * @date 12/13/21
  */
@@ -16,6 +19,8 @@
 typedef struct {
     int numThreads;
     unsigned long long max;
+    char *methodName;
+    void (*sieveMethod)(char [], unsigned long long);
     char shouldPrint;
 } myArgs;
 
@@ -24,6 +29,7 @@ myArgs getArgs(int, char const *[]);
 void usage(const char *);
 void ompInitArray(char [], unsigned long long);
 void ompSieve(char [], unsigned long long);
+void rompSieve(char [], unsigned long long);
 void printPrimes(const char [], unsigned long long);
 
 int main(int argc, char const *argv[]) {
@@ -48,13 +54,14 @@ int main(int argc, char const *argv[]) {
         ompInitArray(primes, size);
 
         // Run the sieve.
-        ompSieve(primes, args.max);
+        (*args.sieveMethod)(primes, args.max);
         elapsed = omp_get_wtime() - start;
         
         // Output the results.
-        printf("OMP: %d threads, Max = %.1Le, %f seconds\n", args.numThreads, (long double) args.max, elapsed);
-        if (args.shouldPrint)
+        printf("%s: %d threads, Max = %.1Le, %f seconds\n", args.methodName, args.numThreads, (long double) args.max, elapsed);
+        if (args.shouldPrint) {
             printPrimes(primes, size);
+        }            
     }
     else {
         printf("There are no primes less than %llu\n", args.max);
@@ -73,21 +80,41 @@ int main(int argc, char const *argv[]) {
 myArgs getArgs(int argc, char const *argv[]) {
     myArgs args;
 
-    if (argc != 3 && argc != 4) 
+    // Verify the number of arguments.
+    if (argc != 4 && argc != 5) {
         usage(argv[0]);
+    }        
     
+    // Verify the number of threads.
     args.numThreads = strtol(argv[1], NULL, 10);
     if (args.numThreads < 1 || args.numThreads > omp_get_num_procs()) 
         usage(argv[0]);
     
+    // Verify the max.
     if (*argv[2] == '-')
         usage(argv[0]);
     args.max = strtoul(argv[2], NULL, 10);
-    
-    if (argc == 4 && strcmp(argv[3], "1") == 0) 
+
+    // Verify the sieve method.
+    if (strcmp(argv[3], "omp") == 0 || strcmp(argv[3], "OMP") == 0) {
+        args.methodName = "OMP";
+        args.sieveMethod = &ompSieve;
+    }
+    else if (strcmp(argv[3], "romp") == 0 || strcmp(argv[3], "ROMP") == 0) {
+        args.methodName = "R-OMP";
+        args.sieveMethod = &rompSieve;
+    }
+    else {
+        usage(argv[0]);
+    }        
+
+    // Verify printing the primes.
+    if (argc == 5 && strcmp(argv[4], "1") == 0) {
         args.shouldPrint = 1;
-    else
+    }        
+    else {
         args.shouldPrint = 0;
+    }        
     
     return args;
 } 
@@ -98,9 +125,10 @@ myArgs getArgs(int argc, char const *argv[]) {
  * @param prog_name the name of the executable file
  */
 void usage(const char *prog_name) {
-    fprintf(stderr, "\nUsage: %s <thread count> <max> <Opt: 1 to print primes>\n", prog_name);
-    fprintf(stderr, "\tThread count must be between 1 and %d\n", omp_get_num_procs());
-    fprintf(stderr, "\tMax must be greater than or equal to 0\n\n");
+    fprintf(stderr, "\nUsage: %s [Thread Count] [Max] [Method] [Opt: 1 to print primes]\n", prog_name);
+    fprintf(stderr, "\t1 <= Thread Count <= %d\n", omp_get_num_procs());
+    fprintf(stderr, "\tMax >= 0\n");
+    fprintf(stderr, "\tMethods: OMP, ROMP\n\n");
     exit(EXIT_FAILURE);
 }
 
@@ -143,6 +171,40 @@ void ompSieve(char primes[], unsigned long long max) {
                 #pragma omp parallel for
                 for (j = firstJ; j <= max; j += 2 * i) {
                     primes[j / 2] = 0;
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Finds all primes up to and including a specifed number recursively using multithreading.
+ * 
+ * @param primes the array to mark the prime numbers in
+ * @param max the largest number to search up to
+ */
+void rompSieve(char primes[], unsigned long long max) {
+    // Start after 7 because the first 4 entries in the array are always prime.
+    if (max > 7) {
+        unsigned long long i, j, firstJ, limit = sqrt((long double) max);
+        rompSieve(primes, limit);
+
+        // Loop through only the first portion of the array (up to the square root of max).
+        #pragma omp parallel private(i, firstJ) if(max - limit >= omp_get_num_threads())
+        {
+            for (i = 3; i <= limit; i += 2) {
+                // If the value is one (true), then it is prime.
+                if (primes[i / 2]) {
+                    // Calculate the first j and ensure it is odd.
+                    firstJ = i * (limit / i + 1);
+                    if (firstJ % 2 == 0)
+                        firstJ += i;
+                    
+                    // Mark all multiples of the value between limit and max to zero (false), as they cannot be prime.
+                    #pragma omp for nowait
+                    for (j = firstJ; j <= max; j += 2 * i) {
+                        primes[j / 2] = 0;
+                    }
                 }
             }
         }
