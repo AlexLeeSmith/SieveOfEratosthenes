@@ -9,7 +9,7 @@ BIN=Bin/
 OUT=Out/
 FLAGS=-g -Wall
 
-all:omp serialSimple serialEnhanced
+all:omp serialSimple serialOdds serial1379
 
 omp:omp_sieve.c
 	$(CC) $(FLAGS) -o $(BIN)omp_sieve omp_sieve.c $(LIBS1)
@@ -17,10 +17,13 @@ omp:omp_sieve.c
 serialSimple:serial_sieve_simple.c
 	$(CC) $(FLAGS) -o $(BIN)serial_sieve_simple serial_sieve_simple.c $(LIBS2)
 
-serialEnhanced:serial_sieve_enhanced.c
-	$(CC) $(FLAGS) -o $(BIN)serial_sieve_enhanced serial_sieve_enhanced.c $(LIBS2)
+serialOdds:serial_sieve_odds.c
+	$(CC) $(FLAGS) -o $(BIN)serial_sieve_odds serial_sieve_odds.c $(LIBS2)
 
-clean:cleanOMP cleanSerialSimple cleanSerialEnhanced cleanCompareSerial cleanCompareParallel cleanVerify
+serial1379:serial_sieve_1379.c
+	$(CC) $(FLAGS) -o $(BIN)serial_sieve_1379 serial_sieve_1379.c $(LIBS2)
+
+clean:cleanOMP cleanSerialSimple cleanSerialOdds cleanSerial1379 cleanCompareSerial cleanCompareParallel cleanVerify
 
 cleanOMP:
 	$(RM) $(BIN)omp_sieve
@@ -28,10 +31,13 @@ cleanOMP:
 cleanSerialSimple:
 	$(RM) $(BIN)serial_sieve_simple
 
-cleanSerialEnhanced:
-	$(RM) $(BIN)serial_sieve_enhanced
+cleanSerialOdds:
+	$(RM) $(BIN)serial_sieve_odds
 
-cleanCompareSerial:cleanSerialSimple cleanSerialEnhanced cleanOMP
+cleanSerial1379:
+	$(RM) $(BIN)serial_sieve_1379
+
+cleanCompareSerial:cleanSerialSimple cleanSerialOdds cleanSerial1379 cleanOMP
 	$(RM) $(OUT)compare_serial_output
 
 cleanCompareParallel:cleanOMP
