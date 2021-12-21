@@ -162,20 +162,16 @@ void ompInitArray(char arr[], unsigned long long size) {
 void ompSieve(char primes[], unsigned long long max) {
     // Start after 7 because the first 4 entries in the array are always prime.
     if (max > 7) {
-        unsigned long long i, j, firstJ, limit = sqrt((long double) max);
+        unsigned long long i, j, limit = sqrt((long double) max);
 
         // Loop through only the first portion of the array (up to the square root of max).
         for (i = 3; i <= limit; i += 2) {
             // If the value is one (true), then it is prime.
             if (primes[i / 2]) {
-                // Calculate the first j and ensure it is odd.
-                firstJ = i * i;
-                if (firstJ % 2 == 0)
-                    firstJ += i;
-                
                 // Mark all multiples of the value between limit and max to zero (false), as they cannot be prime.
                 #pragma omp parallel for
-                for (j = firstJ; j <= max; j += 2 * i) {
+                for (j = i * i; j <= max; j += 2 * i) {
+                    // The multiple is guarenteed to be odd.
                     primes[j / 2] = 0;
                 }
             }
@@ -192,23 +188,19 @@ void ompSieve(char primes[], unsigned long long max) {
 void rompSieve(char primes[], unsigned long long max) {
     // Start after 7 because the first 4 entries in the array are always prime.
     if (max > 7) {
-        unsigned long long i, j, firstJ, limit = sqrt((long double) max);
+        unsigned long long i, j, limit = sqrt((long double) max);
         rompSieve(primes, limit);
 
         // Loop through only the first portion of the array (up to the square root of max).
-        #pragma omp parallel private(i, firstJ) if(max - limit >= omp_get_num_threads())
+        #pragma omp parallel private(i) if(max - limit >= omp_get_num_threads())
         {
             for (i = 3; i <= limit; i += 2) {
                 // If the value is one (true), then it is prime.
                 if (primes[i / 2]) {
-                    // Calculate the first j and ensure it is odd.
-                    firstJ = i * (limit / i + 1);
-                    if (firstJ % 2 == 0)
-                        firstJ += i;
-                    
                     // Mark all multiples of the value between limit and max to zero (false), as they cannot be prime.
                     #pragma omp for nowait
-                    for (j = firstJ; j <= max; j += 2 * i) {
+                    for (j = i * i; j <= max; j += 2 * i) {
+                        // The multiple is guarenteed to be odd.
                         primes[j / 2] = 0;
                     }
                 }
@@ -245,26 +237,21 @@ void rompSieveTasks(char primes[], unsigned long long max) {
 void rompSieveTasksHelper(char primes[], unsigned long long max) {
     // Start after 7 because the first 4 entries in the array are always prime.
     if (max > 7) {
-        unsigned long long i, j, firstJ, limit = sqrt((long double) max);
+        unsigned long long i, j, limit = sqrt((long double) max);
         rompSieveTasksHelper(primes, limit);
 
         // Loop through only the first portion of the array (up to the square root of max).
         #pragma omp taskloop
         for (i = 3; i <= limit; i += 2) {
             // If the value is one (true), then it is prime.
-            if (primes[i / 2]) {
-                // Calculate the first j and ensure it is odd.
-                firstJ = i * (limit / i + 1);
-                if (firstJ % 2 == 0)
-                    firstJ += i;
-                
+            if (primes[i / 2]) {                
                 // Mark all multiples of the value between limit and max to zero (false), as they cannot be prime.
                 #pragma omp taskloop nogroup
-                for (j = firstJ; j <= max; j += 2 * i) {
+                for (j = i * i; j <= max; j += 2 * i) {
                     primes[j / 2] = 0;
                 }
             }
-        }        
+        }         
     }
 }
 
