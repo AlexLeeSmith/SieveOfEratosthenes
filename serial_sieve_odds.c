@@ -1,5 +1,5 @@
 /**
- * Enhanced serial implementation of the Sieve of Eratosthenes for finding all the primes up to a given number.
+ * Serial implementation of the Sieve of Eratosthenes (only odds) for finding all the primes up to a given number.
  * 
  * Usage: ./Bin/serial_sieve_enhanced <max> <Opt: 1 to print result>
  * 
@@ -51,7 +51,7 @@ int main(int argc, char const *argv[]) {
         elapsed = getTime() - start;
         
         // Output the results.
-        printf("Serial-Enhanced: Max = %.1le, %f seconds\n", (double) args.max, elapsed);
+        printf("Serial-Odds: Max = %.1le, %f seconds\n", (double) args.max, elapsed);
         if (args.shouldPrint)
             printPrimes(primes, size);
     }

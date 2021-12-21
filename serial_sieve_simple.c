@@ -11,12 +11,14 @@
  * @editdate 10/24/21
  */
 
+/** Preprocessor Directives **/
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
 
+/** Functions **/
 void usage(const char *);
 double getTime();
 
