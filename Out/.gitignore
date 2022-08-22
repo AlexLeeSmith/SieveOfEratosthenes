@@ -3,4 +3,4 @@
 
 # Except these files
 !.gitignore
-!primesThrough3Mil
+!primesThrough3Mil.txt
