@@ -1,22 +1,35 @@
-# Usage: ./verifyParallel.sh [Executable Path] [Method]
-# Methods: OMP, ROMP, ROMPTASKS
-#
-# @author Alex Smith (alsmi14@ilstu.edu)
-# @date 11/14/21
+# Explaination...
+# 
+# Alex Smith (alsmi14@ilstu.edu)
+# 8/19/22
 
-if [ $# -eq 2 ]
-then
-    outFolder='Out'
-    outFileEven=$outFolder/'verify_even'
-    outFileOdd=$outFolder/'verify_odd'
+BIN='Bin'
+OUT='Out'
+primes3M=$OUT'/primesThrough3Mil.txt'
+outPrimes=$OUT'/primes.txt'
 
-    make cleanVerify
+# Compile omp driver.
+make ompDriver 1>'/dev/null'
 
-    ./$1 10 3000000 $2 1 > $outFileEven
-    ./$1 10 2999999 $2 1 > $outFileOdd
-    diff -w $outFileEven $outFolder/primesThrough3Mil
-    diff -w $outFileOdd $outFolder/primesThrough3Mil
-else
-    printf "\nUsage: ./verifyParallel.sh [Executable Path] [Method]\n"
-    printf "\tMethods: OMP, ROMP, ROMPTASKS\n\n"
-fi
+# Skip a line.
+echo ''
+
+# Verify that each omp method works correctly.
+for serialMethod in 'omp' 'romp' 'romptasks'
+do
+    # Run the omp sieve up to 3 million.
+    "./$BIN/omp_driver" 2 2999999 $serialMethod 1>'/dev/null'
+
+    # Compare omp output with Out/primesThrough3Mil
+    diff -w $outPrimes $primes3M 1>'/dev/null'
+    error=$?
+    if [ $error -ne 0 ]
+    then
+        echo "$serialMethod Failed."
+    else
+        echo "$serialMethod Passed."
+    fi
+done
+
+# Delete all the generated files.
+make clean 1>'/dev/null'

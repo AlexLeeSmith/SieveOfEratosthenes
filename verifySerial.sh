@@ -1,20 +1,33 @@
-# Usage: ./verifySerial.sh <execPath>
-#
-# @author Alex Smith (alsmi14@ilstu.edu)
-# @date 11/14/21
+# Explaination...
+# 
+# Alex Smith (alsmi14@ilstu.edu)
+# 8/19/22
 
-if [ $# -eq 1 ]
-then
-    outFolder='Out'
-    outFileEven=$outFolder/'verify_even'
-    outFileOdd=$outFolder/'verify_odd'
+BIN='Bin'
+OUT='Out'
+primes3M=$OUT'/primesThrough3Mil.txt'
+outPrimes=$OUT'/primes.txt'
 
-    make cleanVerify
+# Compile serial driver.
+make serialDriver 1>'/dev/null'
 
-    ./$1 3000000 1 > $outFileEven
-    ./$1 2999999 1 > $outFileOdd
-    diff -w $outFileEven $outFolder/primesThrough3Mil
-    diff -w $outFileOdd $outFolder/primesThrough3Mil
-else
-    printf "\n\tUsage: ./verifySerial.sh <execPath>\n\n"
-fi
+# Skip a line.
+echo ''
+
+# Verify that each serial method works correctly.
+for serialMethod in 'simple' 'odds' 'recursive' '1379'
+do
+    # Compare serial output with Out/primesThrough3Mil
+    "./$BIN/serial_driver" 2999999 $serialMethod 1>'/dev/null'
+
+    diff -w $outPrimes $primes3M 1>/'dev/null'
+    error=$?
+    if [ $error -ne 0 ]
+    then
+        echo "$serialMethod Failed."
+    else
+        echo "$serialMethod Passed."
+    fi
+done
+
+make clean 1>'/dev/null'
