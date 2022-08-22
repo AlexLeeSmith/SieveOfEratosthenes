@@ -1,20 +1,25 @@
-# @author Alex Smith (alsmi14@ilstu.edu)
-# @date 11/14/21
+# 
+# 
+# Alex Smith (SmithAlexLee30@gmail.com)
+# 8/20/22
 
-outFolder='Out'
-binFolder='Bin'
-outFile=$outFolder/'compare_serial_output'
+BIN='Bin'
+OUT='Out'
+outFile=$OUT'/compare_serial.txt'
 
-make cleanCompareSerial
-make all
+make serialDriver 1>'/dev/null'
+make cleanCompareSerial 1>'/dev/null'
 
-# N = 1e4, 1e6, 1e8
-for N in 10000 1000000 100000000
+# N = 1e7, 1e8
+for N in 10000000 100000000
 do
-    ./$binFolder/serial_sieve_simple $N >> $outFile
-    ./$binFolder/serial_sieve_odds $N >> $outFile
-    ./$binFolder/serial_sieve_1379 $N >> $outFile
-    ./$binFolder/omp_sieve 1 omp $N >> $outFile
-    ./$binFolder/omp_sieve 1 romp $N >> $outFile
-    echo =============== >> $outFile
+    for serialMethod in 'simple' 'odds' 'recursive' '1379'
+    do
+        "./$BIN/serial_driver" $N $serialMethod 0 >> $outFile
+    done
+    echo '===============' >> $outFile
 done
+
+echo "Results saved to: $outFile"
+
+make cleanSerialDriver 1>'/dev/null'
