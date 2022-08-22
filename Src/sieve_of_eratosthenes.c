@@ -1,9 +1,8 @@
 /**
  * @file sieve_of_eratosthenes.c
- * @author your name (you@domain.com)
- * @brief 
- * @version 0.1
- * @date 2022-08-18
+ * @author Alex Smith (SmithAlexLee30@gmail.com)
+ * @brief Implementation file for the Sieve of Eratosthenes library.
+ * @date 8/19/2022
  * 
  * @copyright Copyright (c) 2022
  */

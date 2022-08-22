@@ -1,9 +1,8 @@
 /**
  * @file prime_driver.h
- * @author your name (you@domain.com)
- * @brief 
- * @version 0.1
- * @date 2022-08-19
+ * @author Alex Smith (SmithAlexLee30@gmail.com)
+ * @brief Header file for a driver that runs the OpenMP Sieve of Eratosthenes.
+ * @date 8/19/2022
  * 
  * @copyright Copyright (c) 2022
  */

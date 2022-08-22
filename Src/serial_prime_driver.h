@@ -1,9 +1,8 @@
 /**
  * @file serial_prime_driver.h
- * @author your name (you@domain.com)
- * @brief 
- * @version 0.1
- * @date 2022-08-19
+ * @author Alex Smith (SmithAlexLee30@gmail.com)
+ * @brief Header file for a driver that runs the serial Sieve of Eratosthenes.
+ * @date 8/19/2022
  * 
  * @copyright Copyright (c) 2022
  */
@@ -21,7 +20,7 @@ typedef struct {
     unsigned long long max;
 
     /**
-     * @brief 
+     * @brief The size of the array that will be required for the chosen sieve function.
      */
     unsigned long long size;
 
@@ -36,7 +35,7 @@ typedef struct {
     void (*sieve_function)(char [], unsigned long long);
 
     /**
-     * @brief 
+     * @brief A pointer to the write function based on the chosen sieve function.
      */
     void (*write_function)(char *, const char [], unsigned long long);
 
@@ -51,7 +50,7 @@ typedef struct {
  * 
  * @param argc the number of arguments.
  * @param argv the array of arguments.
- * @return MyArgs - the command line arguments in their correct data types.
+ * @return The command line arguments in their correct data types.
  */
 MyArgs get_args(const int argc, const char *argv[]);
 
@@ -65,7 +64,7 @@ void usage(const char *progName);
 /**
  * @brief Gets the current time in seconds.
  * 
- * @return double - the current time in seconds.
+ * @return The current time in seconds.
  */
 double get_time();
 
