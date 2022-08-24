@@ -12,7 +12,7 @@ outPrimes=$OUT'/primes.txt'
 driver="$BIN/serial_prime_driver"
 
 # Compile serial driver.
-make $driver 1>'/dev/null'
+make -s $driver
 
 # Skip a line.
 echo ''
@@ -24,7 +24,7 @@ do
     "./$driver" 2999999 $serialMethod 1>'/dev/null'
 
     # Compare serial output with Out/primes_3_million.txt
-    diff -w $outPrimes $primes3M 1>/'dev/null'
+    diff -w $outPrimes $primes3M 1>'/dev/null'
     error=$?
     if [ $error -ne 0 ]
     then
@@ -35,4 +35,4 @@ do
 done
 
 # Delete the large primes files.
-make clean_primes 1>'/dev/null'
+make -s clean_primes

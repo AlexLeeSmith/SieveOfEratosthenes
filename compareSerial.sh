@@ -10,10 +10,10 @@ outFile=$OUT'/compare_serial.txt'
 driver="$BIN/serial_prime_driver"
 
 # Compile serial driver.
-make $driver 1>'/dev/null'
+make -s $driver
 
 # Delete the old compare file if it exists.
-make clean_compare_serial 1>'/dev/null'
+make -s clean_compare_serial
 
 # Run the driver for each max and serial sieve method.
 for max in 10000000 100000000 # 1e7, 1e8

@@ -10,10 +10,10 @@ outFile=$OUT/'compare_omp.txt'
 driver="$BIN/omp_prime_driver"
 
 # Compile omp driver.
-make $driver 1>'/dev/null'
+make -s $driver
 
 # Delete the old compare file if it exists.
-make clean_compare_omp 1>'/dev/null'
+make -s clean_compare_omp
 
 # Run the driver for each max, # of threads, and OpenMP sieve method.
 for max in 100000000 1000000000 # 1e8, 1e9

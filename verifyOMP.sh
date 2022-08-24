@@ -12,7 +12,7 @@ outPrimes=$OUT'/primes.txt'
 driver="$BIN/omp_prime_driver"
 
 # Compile omp driver.
-make $driver 1>'/dev/null'
+make -s $driver
 
 # Skip a line.
 echo ''
@@ -35,4 +35,4 @@ do
 done
 
 # Delete the large primes files.
-make clean_primes 1>'/dev/null'
+make -s clean_primes
