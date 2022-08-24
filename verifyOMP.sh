@@ -5,7 +5,7 @@
 
 BIN='Bin'
 OUT='Out'
-primes3M=$OUT'/primesThrough3Mil.txt'
+primes3M=$OUT'/primes_3_million.txt'
 outPrimes=$OUT'/primes.txt'
 
 # Compile omp driver.
@@ -20,7 +20,7 @@ do
     # Run the omp sieve up to 3 million.
     "./$BIN/omp_driver" 2 2999999 $serialMethod 1>'/dev/null'
 
-    # Compare omp output with Out/primesThrough3Mil
+    # Compare omp output with Out/primes_3_million.txt
     diff -w $outPrimes $primes3M 1>'/dev/null'
     error=$?
     if [ $error -ne 0 ]
@@ -31,5 +31,5 @@ do
     fi
 done
 
-# Delete all the generated files.
-make clean 1>'/dev/null'
+# Delete just the large primes files.
+make clean_primes 1>'/dev/null'

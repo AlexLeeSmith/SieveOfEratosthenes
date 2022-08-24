@@ -5,7 +5,7 @@
 
 BIN='Bin'
 OUT='Out'
-primes3M=$OUT'/primesThrough3Mil.txt'
+primes3M=$OUT'/primes_3_million.txt'
 outPrimes=$OUT'/primes.txt'
 
 # Compile serial driver.
@@ -17,9 +17,10 @@ echo ''
 # Verify that each serial method works correctly.
 for serialMethod in 'simple' 'odds' 'recursive' '1379'
 do
-    # Compare serial output with Out/primesThrough3Mil
+    # Run the serial sieve up to 3 million.
     "./$BIN/serial_driver" 2999999 $serialMethod 1>'/dev/null'
 
+    # Compare serial output with Out/primes_3_million.txt
     diff -w $outPrimes $primes3M 1>/'dev/null'
     error=$?
     if [ $error -ne 0 ]
@@ -30,4 +31,5 @@ do
     fi
 done
 
-make clean 1>'/dev/null'
+# Delete just the large primes files.
+make clean_primes 1>'/dev/null'
