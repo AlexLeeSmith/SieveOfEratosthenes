@@ -1,29 +1,33 @@
-# 
+# Runs each OpenMP sieve method with various inputs to compare their runtimes.
 # 
 # Alex Smith (SmithAlexLee30@gmail.com)
 # 8/20/22
 
+# Directories
 BIN='Bin'
 OUT='Out'
 outFile=$OUT/'compare_omp.txt'
+driver="$BIN/omp_prime_driver"
 
-make ompDriver 1>'/dev/null'
-make cleanCompareOMP 1>'/dev/null'
+# Compile omp driver.
+make $driver 1>'/dev/null'
 
-# N = 1e8, 1e9
-for N in 100000000 1000000000
+# Delete the old compare file if it exists.
+make clean_compare_omp 1>'/dev/null'
+
+# Run the driver for each max, # of threads, and OpenMP sieve method.
+for max in 100000000 1000000000 # 1e8, 1e9
 do
     for nThreads in 1 2 5
     do
-        for serialMethod in 'omp' 'romp' 'romptasks'
+        for ompMethod in 'omp' 'romp' 'romptasks'
         do
-            "./$BIN/omp_driver" $nThreads $N $serialMethod 0 >> $outFile
+            "./$driver" $nThreads $max $ompMethod 0 >> $outFile
         done
         echo '~~~~~~~~~~~~~~~' >> $outFile
     done
     echo '===============' >> $outFile
 done
 
+# Output the location of the comparison file.
 echo "Results saved to: $outFile"
-
-make cleanOmpDriver 1>'/dev/null'

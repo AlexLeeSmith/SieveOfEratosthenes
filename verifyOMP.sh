@@ -1,4 +1,5 @@
-# Explaination...
+# Verifies that each OpenMP sieve method works correctly by comparing their outputs
+# with a known set of primes (0-3Mil).
 # 
 # Alex Smith (alsmi14@ilstu.edu)
 # 8/19/22
