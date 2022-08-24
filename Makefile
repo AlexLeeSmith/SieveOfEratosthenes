@@ -1,47 +1,65 @@
-# @author Alex Smith (alsmi14@ilstu.edu)
-# @date 11/6/21
+# Build file for easily compiling the Sieve of Eratosthenes drivers and cleaning
+# all their created files.
+# 
+# To compile:
+# 	make
+# 
+# To delete all generated files:
+# 	make clean
+# 
+# Alex Smith (SmithAlexLee30@gmail.com)
+# 8/20/22
 
+# Directories
+BIN=Bin
+SRC=Src
+OUT=Out
+
+# Libraries
+OPENMP=-fopenmp
+MATH=-lm
+
+# Other
 CC=gcc
 RM=rm -f
-LIBS1=-fopenmp -lm
-LIBS2=-lm
-BIN=Bin/
-OUT=Out/
-FLAGS=-g -Wall
+FLAGS=-c -g -Wall
 
-all:omp serialSimple serialOdds serial1379
+# Filenames
+sieve=sieve_of_eratosthenes
+serialD=serial_prime_driver
+ompD=omp_prime_driver
 
-omp:omp_sieve.c
-	$(CC) $(FLAGS) -o $(BIN)omp_sieve omp_sieve.c $(LIBS1)
+# Default rule
+all: $(BIN)/$(serialD) $(BIN)/$(ompD)
 
-serialSimple:serial_sieve_simple.c
-	$(CC) $(FLAGS) -o $(BIN)serial_sieve_simple serial_sieve_simple.c $(LIBS2)
+# Executable rules
+$(BIN)/$(serialD): $(BIN)/$(sieve).o $(BIN)/$(serialD).o
+	$(CC) $(BIN)/$(sieve).o $(BIN)/$(serialD).o -o $@ $(OPENMP) $(MATH)
 
-serialOdds:serial_sieve_odds.c
-	$(CC) $(FLAGS) -o $(BIN)serial_sieve_odds serial_sieve_odds.c $(LIBS2)
+$(BIN)/$(ompD): $(BIN)/$(sieve).o $(BIN)/$(ompD).o
+	$(CC) $(BIN)/$(sieve).o $(BIN)/$(ompD).o -o $@ $(OPENMP) $(MATH)
 
-serial1379:serial_sieve_1379.c
-	$(CC) $(FLAGS) -o $(BIN)serial_sieve_1379 serial_sieve_1379.c $(LIBS2)
+# Object rules
+$(BIN)/$(sieve).o: $(SRC)/$(sieve).h $(SRC)/$(sieve).c
+	$(CC) $(FLAGS) $(SRC)/$(sieve).c -o $@ $(OPENMP) $(MATH)
 
-clean:cleanOMP cleanSerialSimple cleanSerialOdds cleanSerial1379 cleanCompareSerial cleanCompareParallel cleanVerify
+$(BIN)/$(serialD).o: $(SRC)/$(serialD).h $(SRC)/$(serialD).c
+	$(CC) $(FLAGS) $(SRC)/$(serialD).c -o $@ $(MATH)
 
-cleanOMP:
-	$(RM) $(BIN)omp_sieve
+$(BIN)/$(ompD).o: $(SRC)/$(ompD).h $(SRC)/$(ompD).c
+	$(CC) $(FLAGS) $(SRC)/$(ompD).c -o $@ $(OPENMP) $(MATH)
 
-cleanSerialSimple:
-	$(RM) $(BIN)serial_sieve_simple
+# Cleaning rules
+clean: clean_bin clean_primes clean_compare_serial clean_compare_omp
 
-cleanSerialOdds:
-	$(RM) $(BIN)serial_sieve_odds
+clean_bin:
+	$(RM) $(BIN)/$(serialD) $(BIN)/$(ompD) $(BIN)/*.o
 
-cleanSerial1379:
-	$(RM) $(BIN)serial_sieve_1379
+clean_primes:
+	$(RM) $(OUT)/primes.txt
 
-cleanCompareSerial:cleanSerialSimple cleanSerialOdds cleanSerial1379 cleanOMP
-	$(RM) $(OUT)compare_serial_output
+clean_compare_serial:
+	$(RM) $(OUT)/compare_serial.txt
 
-cleanCompareParallel:cleanOMP
-	$(RM) $(OUT)compare_parallel_output
-
-cleanVerify:
-	$(RM) $(OUT)verify_even $(OUT)verify_odd
+clean_compare_omp:
+	$(RM) $(OUT)/compare_omp.txt
