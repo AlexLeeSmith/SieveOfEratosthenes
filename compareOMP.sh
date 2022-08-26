@@ -4,9 +4,9 @@
 # 8/20/22
 
 # Directories
-BIN='Bin'
-OUT='Out'
-outFile=$OUT/'compare_omp.txt'
+BIN='./Bin'
+OUT='./Out'
+outFile="$OUT/compare_omp.txt"
 driver="$BIN/omp_prime_driver"
 
 # Compile omp driver.
@@ -22,7 +22,7 @@ do
     do
         for ompMethod in 'omp' 'romp' 'romptasks'
         do
-            "./$driver" $nThreads $max $ompMethod 0 >> $outFile
+            $driver $nThreads $max $ompMethod 0 >> $outFile
         done
         echo '~~~~~~~~~~~~~~~' >> $outFile
     done

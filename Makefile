@@ -10,44 +10,49 @@
 # Alex Smith (SmithAlexLee30@gmail.com)
 # 8/20/22
 
+# Make directives
+.DELETE_ON_ERROR:
+.PHONY: all clean clean_bin clean_primes clean_compare_serial clean_compare_omp
+
 # Directories
-BIN=Bin
-SRC=Src
-OUT=Out
+BIN := ./Bin
+SRC := ./Src
+OUT := ./Out
 
 # Libraries
-OPENMP=-fopenmp
-MATH=-lm
+OPENMP := -fopenmp
+MATH := -lm
 
 # Other
-CC=gcc
-RM=rm -f
-FLAGS=-c -g -Wall
+CC := gcc
+RM := rm -f
+FLAGS := -g -Wall
+SETNAME = -o $@
 
 # Filenames
-sieve=sieve_of_eratosthenes
-serialD=serial_prime_driver
-ompD=omp_prime_driver
+sieve := sieve_of_eratosthenes
+serialD := serial_prime_driver
+ompD := omp_prime_driver
 
 # Default rule
 all: $(BIN)/$(serialD) $(BIN)/$(ompD)
 
 # Executable rules
 $(BIN)/$(serialD): $(BIN)/$(sieve).o $(BIN)/$(serialD).o
-	$(CC) $(BIN)/$(sieve).o $(BIN)/$(serialD).o -o $@ $(OPENMP) $(MATH)
+	$(CC) $(FLAGS) $(BIN)/$(sieve).o $(BIN)/$(serialD).o $(SETNAME) $(OPENMP) $(MATH)
 
 $(BIN)/$(ompD): $(BIN)/$(sieve).o $(BIN)/$(ompD).o
-	$(CC) $(BIN)/$(sieve).o $(BIN)/$(ompD).o -o $@ $(OPENMP) $(MATH)
+	$(CC) $(FLAGS) $(BIN)/$(sieve).o $(BIN)/$(ompD).o $(SETNAME) $(OPENMP) $(MATH)
 
 # Object rules
 $(BIN)/$(sieve).o: $(SRC)/$(sieve).h $(SRC)/$(sieve).c
-	$(CC) $(FLAGS) $(SRC)/$(sieve).c -o $@ $(OPENMP) $(MATH)
+	$(CC) $(FLAGS) -c $(SRC)/$(sieve).c $(SETNAME) $(OPENMP) $(MATH)
 
 $(BIN)/$(serialD).o: $(SRC)/$(serialD).h $(SRC)/$(serialD).c
-	$(CC) $(FLAGS) $(SRC)/$(serialD).c -o $@ $(MATH)
+	$(CC) $(FLAGS) -c $(SRC)/$(serialD).c $(SETNAME) $(MATH)
 
 $(BIN)/$(ompD).o: $(SRC)/$(ompD).h $(SRC)/$(ompD).c
-	$(CC) $(FLAGS) $(SRC)/$(ompD).c -o $@ $(OPENMP) $(MATH)
+	$(CC) $(FLAGS) -c $(SRC)/$(ompD).c $(SETNAME) $(OPENMP) $(MATH)
 
 # Cleaning rules
 clean: clean_bin clean_primes clean_compare_serial clean_compare_omp

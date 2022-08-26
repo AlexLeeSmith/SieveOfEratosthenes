@@ -4,9 +4,9 @@
 # 8/20/22
 
 # Directories
-BIN='Bin'
-OUT='Out'
-outFile=$OUT'/compare_serial.txt'
+BIN='./Bin'
+OUT='./Out'
+outFile="$OUT/compare_serial.txt"
 driver="$BIN/serial_prime_driver"
 
 # Compile serial driver.
@@ -20,7 +20,7 @@ for max in 10000000 100000000 # 1e7, 1e8
 do
     for serialMethod in 'simple' 'odds' 'recursive' '1379'
     do
-        "./$driver" $max $serialMethod 0 >> $outFile
+        $driver $max $serialMethod 0 >> $outFile
     done
     echo '===============' >> $outFile
 done

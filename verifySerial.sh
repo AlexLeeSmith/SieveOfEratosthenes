@@ -5,10 +5,10 @@
 # 8/19/22
 
 # Directories
-BIN='Bin'
-OUT='Out'
-primes3M=$OUT'/primes_3_million.txt'
-outPrimes=$OUT'/primes.txt'
+BIN='./Bin'
+OUT='./Out'
+primes3M="$OUT/primes_3_million.txt"
+outPrimes="$OUT/primes.txt"
 driver="$BIN/serial_prime_driver"
 
 # Compile serial driver.
@@ -21,7 +21,7 @@ echo ''
 for serialMethod in 'simple' 'odds' 'recursive' '1379'
 do
     # Run the serial sieve up to 3 million.
-    "./$driver" 2999999 $serialMethod 1>'/dev/null'
+    $driver 2999999 $serialMethod 1>'/dev/null'
 
     # Compare serial output with Out/primes_3_million.txt
     diff -w $outPrimes $primes3M 1>'/dev/null'
