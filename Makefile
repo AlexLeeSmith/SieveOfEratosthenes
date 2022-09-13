@@ -19,6 +19,13 @@ BIN := ./Bin
 SRC := ./Src
 OUT := ./Out
 
+# Filenames
+sieve := sieve_of_eratosthenes
+serialD := serial_prime_driver
+ompD := omp_prime_driver
+drivers := $(BIN)/$(serialD) $(BIN)/$(ompD)
+objects := $(BIN)/$(sieve).o $(BIN)/$(serialD).o $(BIN)/$(ompD).o
+
 # Libraries
 OPENMP := -fopenmp
 MATH := -lm
@@ -29,36 +36,22 @@ RM := rm -f
 FLAGS := -g -Wall
 SETNAME = -o $@
 
-# Filenames
-sieve := sieve_of_eratosthenes
-serialD := serial_prime_driver
-ompD := omp_prime_driver
-
 # Default rule
-all: $(BIN)/$(serialD) $(BIN)/$(ompD)
+all: $(drivers)
 
 # Executable rules
-$(BIN)/$(serialD): $(BIN)/$(sieve).o $(BIN)/$(serialD).o
-	$(CC) $(FLAGS) $(BIN)/$(sieve).o $(BIN)/$(serialD).o $(SETNAME) $(OPENMP) $(MATH)
-
-$(BIN)/$(ompD): $(BIN)/$(sieve).o $(BIN)/$(ompD).o
-	$(CC) $(FLAGS) $(BIN)/$(sieve).o $(BIN)/$(ompD).o $(SETNAME) $(OPENMP) $(MATH)
+$(drivers): %: $(BIN)/$(sieve).o %.o
+	$(CC) $(FLAGS) $^ $(SETNAME) $(OPENMP) $(MATH)
 
 # Object rules
-$(BIN)/$(sieve).o: $(SRC)/$(sieve).h $(SRC)/$(sieve).c
-	$(CC) $(FLAGS) -c $(SRC)/$(sieve).c $(SETNAME) $(OPENMP) $(MATH)
-
-$(BIN)/$(serialD).o: $(SRC)/$(serialD).h $(SRC)/$(serialD).c
-	$(CC) $(FLAGS) -c $(SRC)/$(serialD).c $(SETNAME) $(MATH)
-
-$(BIN)/$(ompD).o: $(SRC)/$(ompD).h $(SRC)/$(ompD).c
-	$(CC) $(FLAGS) -c $(SRC)/$(ompD).c $(SETNAME) $(OPENMP) $(MATH)
+$(objects): $(BIN)/%.o: $(SRC)/%.c $(SRC)/%.h
+	$(CC) $(FLAGS) -c $< $(SETNAME) $(OPENMP) $(MATH)
 
 # Cleaning rules
 clean: clean_bin clean_primes clean_compare_serial clean_compare_omp
 
 clean_bin:
-	$(RM) $(BIN)/$(serialD) $(BIN)/$(ompD) $(BIN)/*.o
+	$(RM) $(drivers) $(objects)
 
 clean_primes:
 	$(RM) $(OUT)/primes.txt
