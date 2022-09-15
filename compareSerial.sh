@@ -16,7 +16,7 @@ make -s $driver
 make -s clean_compare_serial
 
 # Run the driver for each max and serial sieve method.
-for max in 10000000 100000000 # 1e7, 1e8
+for max in 100000000 500000000 # 1e8, 5e8
 do
     for serialMethod in 'simple' 'odds' 'recursive' '1379'
     do
