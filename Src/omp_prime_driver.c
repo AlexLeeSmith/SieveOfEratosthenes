@@ -42,12 +42,13 @@ int main(const int argc, char const *argv[]) {
         elapsed = omp_get_wtime() - start;
         
         // Output the results.
-        printf("%s: %d threads, Max = %.1Le, %f seconds\n", args.functionName, args.numThreads, (long double) args.max, elapsed);
+        printf("%s: %d threads, Max = %.1Le, %f seconds, %llu bytes\n", args.functionName, args.numThreads, (long double) args.max, elapsed, size);
 
         if (args.shouldWrite) {
             // char filename[20];
             // sprintf(filename, "Out/primes(%s)", args.functionName);
-            write_primes_odds("Out/primes.txt", primes, size);
+            write_primes_odds(PRIMES_FILE, primes, size);
+            printf("Primes have been saved to: %s\n", PRIMES_FILE);
         }         
     }
     else {

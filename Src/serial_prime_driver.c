@@ -37,12 +37,13 @@ int main(const int argc, char const *argv[]) {
         elapsed = get_time() - start;
         
         // Output the results.
-        printf("%s: Max = %.1Le, %f seconds\n", args.functionName, (long double) args.max, elapsed);
+        printf("%s: Max = %.1Le, %f seconds, %llu bytes\n", args.functionName, (long double) args.max, elapsed, args.size);
 
         if (args.shouldWrite) {
             // char filename[20];
             // sprintf(filename, "Out/primes(%s)", args.functionName);
             (*args.write_function)("Out/primes.txt", primes, args.size);
+            printf("Primes have been saved to: %s\n", PRIMES_FILE);
         }        
     }
     else {

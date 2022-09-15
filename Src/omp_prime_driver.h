@@ -10,6 +10,8 @@
 #ifndef OMP_PRIME_DRIVER
 #define OMP_PRIME_DRIVER
 
+#define PRIMES_FILE "Out/primes.txt"
+
 /**
  * @brief A structure for storing user arguments.
  */
