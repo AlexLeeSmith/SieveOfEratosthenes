@@ -1,0 +1,7 @@
+.vscode
+
+Bin/*
+!Bin/.gitkeep
+
+Out/*
+!Out/primes_3_million.txt

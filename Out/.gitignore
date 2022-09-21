@@ -1,6 +1,0 @@
-# Ignore everything in this directory
-*
-
-# Except these files
-!.gitignore
-!primes_3_million.txt
