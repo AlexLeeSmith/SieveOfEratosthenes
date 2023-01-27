@@ -1,7 +1,16 @@
-.vscode
+# Visual Studio Code #
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
 
+# Binaries #
 Bin/*
 !Bin/.gitkeep
 
+# Objects #
+Obj/*
+!Obj/.gitkeep
+
+# Outputs #
 Out/*
-!Out/primes_3_million.txt
+!Out/.gitkeep
