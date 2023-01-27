@@ -49,14 +49,15 @@ int main(const int argc, char const *argv[]) {
             // sprintf(filename, "Out/primes(%s)", args.functionName);
             write_primes_odds(PRIMES_FILE, primes, size);
             printf("Primes have been saved to: %s\n", PRIMES_FILE);
-        }         
+        }
+
+        // Free heap memory.
+        free(primes);
     }
     else {
         printf("There are no primes less than %llu\n", args.max);
     }
     
-    // Free heap memory and exit.
-    free(primes);
     exit(EXIT_SUCCESS);
 }
 
