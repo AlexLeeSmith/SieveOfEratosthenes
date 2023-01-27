@@ -87,5 +87,5 @@ clean_out:
 clean_compare_serial:
 	$(RM) $(OUT)/compare_serial.txt
 
-clean_compare_omp:
-	$(RM) $(OUT)/compare_omp.txt
+debug: CC_OPT := -O0
+debug: clean_bin clean_obj all
