@@ -60,14 +60,18 @@ $(drivers): %: $(BIN)/$(sieve).o %.o
 $(objects): $(BIN)/%.o: $(SRC)/%.c $(SRC)/%.h
 	$(CC) $(FLAGS) -c $< $(SETNAME) $(OPENMP) $(MATH)
 
-# Cleaning rules
-clean: clean_bin clean_primes clean_compare_serial clean_compare_omp
+#### Cleaning Rules ####
+clean: clean_bin clean_obj clean_out
+	echo "Directories have been cleaned.\n"
 
 clean_bin:
-	$(RM) $(drivers) $(objects)
+	$(RM) $(BINS)
 
-clean_primes:
-	$(RM) $(OUT)/primes.txt
+clean_obj:
+	$(RM) $(OBJS) $(DEPS)
+
+clean_out:
+	$(RM) $(outPrimes) $(outSerialCompare) $(outSerialMemory) $(outOmpCompare) $(outOmpMemory)
 
 clean_compare_serial:
 	$(RM) $(OUT)/compare_serial.txt
