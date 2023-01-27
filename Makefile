@@ -46,11 +46,22 @@ MATH := -lm
 # Other
 CC := gcc
 RM := rm -f
-FLAGS := -g -Wall
-SETNAME = -o $@
+#### Testing Rules ####
+test: test_omp test_serial
 
-# Default rule
-all: $(drivers)
+test_omp:
+	$(TEST)/verifyOMP.sh
+
+test_serial:
+	$(TEST)/verifySerial.sh
+
+compare: compare_omp compare_serial
+
+compare_omp:
+	$(TEST)/compareOMP.sh
+
+compare_serial:
+	$(TEST)/compareSerial.sh
 
 # Executable rules
 $(drivers): %: $(BIN)/$(sieve).o %.o
