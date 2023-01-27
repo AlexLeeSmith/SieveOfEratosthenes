@@ -1,8 +1,8 @@
 # Build file for easily compiling the Sieve of Eratosthenes drivers and cleaning
 # all their created files.
 # 
-# To compile:
-# 	make
+# To print availible rules:
+#    make help
 # 
 # Makefile Special Targets: https://www.gnu.org/software/make/manual/html_node/Special-Targets.html
 # Makefile Automatic Variables: https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html
@@ -84,8 +84,14 @@ clean_obj:
 clean_out:
 	$(RM) $(outPrimes) $(outSerialCompare) $(outSerialMemory) $(outOmpCompare) $(outOmpMemory)
 
-clean_compare_serial:
-	$(RM) $(OUT)/compare_serial.txt
+#### Other Rules ####
+help:
+	echo "\
+	    make [all]   - To compile all files.\n\
+	    make compare - To compare runtimes.\n\
+	    make test    - To run test scripts.\n\
+	    make clean   - To delete all generated files.\n\
+	    make help    - To print this message of availible rules.\n"
 
 debug: CC_OPT := -O0
 debug: clean_bin clean_obj all
