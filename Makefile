@@ -4,16 +4,28 @@
 # To compile:
 # 	make
 # 
-# To delete all generated files:
-# 	make clean
+# Makefile Special Targets: https://www.gnu.org/software/make/manual/html_node/Special-Targets.html
+# Makefile Automatic Variables: https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html
 # 
 # Alex Smith (SmithAlexLee30@gmail.com)
 # 8/20/22
 
 # Load the config file.
 include .config
+
+#### Special Targets ####
 .DELETE_ON_ERROR:
-.PHONY: all clean clean_bin clean_primes clean_compare_serial clean_compare_omp
+.PHONY: all \
+		compare compare_omp compare_serial \
+		test test_omp test_serial \
+		memory \
+		clean clean_bin clean_obj clean_out \
+		help debug
+.SILENT: compare_omp compare_serial \
+		 test_omp test_serial \
+		 memory \
+		 clean clean_bin clean_obj clean_out \
+		 help debug
 
 # Directories
 BIN := ./Bin
