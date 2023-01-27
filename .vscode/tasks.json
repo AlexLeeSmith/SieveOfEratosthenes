@@ -1,0 +1,17 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Sieve",
+            "type": "shell",
+            "command": "make debug",
+            "problemMatcher": []
+        }, 
+        {
+            "label": "Clean Bin/Obj",
+            "type": "shell",
+            "command": "make clean_bin ; make clean_obj",
+            "problemMatcher": []
+        }
+    ]
+}
