@@ -27,25 +27,48 @@ include .config
 		 clean clean_bin clean_obj clean_out \
 		 help debug
 
-# Directories
-BIN := ./Bin
-SRC := ./Src
-OUT := ./Out
+#### File Names ####
+# Find all .c files.
+SRCS := $(wildcard $(SRC)/*.c)
 
-# Filenames
-sieve := sieve_of_eratosthenes
-serialD := serial_prime_driver
-ompD := omp_prime_driver
-drivers := $(BIN)/$(serialD) $(BIN)/$(ompD)
-objects := $(BIN)/$(sieve).o $(BIN)/$(serialD).o $(BIN)/$(ompD).o
+# Find all .o files from the .c files.
+OBJS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SRCS))
 
-# Libraries
+# Find all .d files from the .c files.
+DEPS := $(patsubst $(SRC)/%.c, $(OBJ)/%.d, $(SRCS))
+
+# Set all driver files.
+BINS := $(BIN)/omp_prime_driver $(BIN)/serial_prime_driver
+
+
+#### Libraries ####
 OPENMP := -fopenmp
 MATH := -lm
 
-# Other
+
+#### Other ####
 CC := gcc
 RM := rm -f
+CC_OPT := -O2
+DEP_FLAGS := -MP -MD
+CFLAGS = -g -Wall $(CC_OPT) $(DEP_FLAGS)
+SET_NAME = -o $@
+
+
+#### Default Rule ####
+all: $(BINS)
+
+
+#### Executable Rules ####
+$(BINS): $(BIN)/%: $(sieveObj) $(OBJ)/%.o
+	$(CC) $(CFLAGS) $^ $(SET_NAME) $(OPENMP) $(MATH)
+
+
+#### Object Rules ####
+$(OBJS): $(OBJ)/%.o: $(SRC)/%.c $(SRC)/%.h
+	$(CC) $(CFLAGS) -c $< $(SET_NAME) $(OPENMP) $(MATH)
+
+
 #### Testing Rules ####
 test: test_omp test_serial
 
