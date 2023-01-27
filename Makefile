@@ -10,7 +10,8 @@
 # Alex Smith (SmithAlexLee30@gmail.com)
 # 8/20/22
 
-# Make directives
+# Load the config file.
+include .config
 .DELETE_ON_ERROR:
 .PHONY: all clean clean_bin clean_primes clean_compare_serial clean_compare_omp
 
